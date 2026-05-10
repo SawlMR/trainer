@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тренажёр по математике</title>
+  <style>
+    :root {
+      --bg-1: #fff7d6;
+      --bg-2: #e9f8d8;
+      --card: rgba(255, 255, 255, 0.9);
+      --green: #4f8f1f;
+      --green-dark: #2f6b12;
+      --orange: #f59e0b;
+      --orange-dark: #c76a00;
+      --violet: #5b44c2;
+      --red: #dc2626;
+      --text: #273043;
+      --muted: #6b7280;
+      --shadow: 0 18px 45px rgba(55, 65, 81, 0.16);
+      --level-accent: #4f8f1f;
+      --level-accent-dark: #2f6b12;
+    }
+
+    body[data-level="freebie"] { --bg-1: #fffbe8; --bg-2: #e9ffd7; --level-accent: #65a30d; --level-accent-dark: #3f6212; }
+    body[data-level="superlight"] { --bg-1: #ecfeff; --bg-2: #dcfce7; --level-accent: #0891b2; --level-accent-dark: #0e7490; }
+    body[data-level="light"] { --bg-1: #f0fdf4; --bg-2: #fef3c7; --level-accent: #16a34a; --level-accent-dark: #166534; }
+    body[data-level="normal"] { --bg-1: #fff7d6; --bg-2: #e9f8d8; --level-accent: #4f8f1f; --level-accent-dark: #2f6b12; }
+    body[data-level="hard"] { --bg-1: #fff1d6; --bg-2: #e0f2fe; --level-accent: #ea580c; --level-accent-dark: #c2410c; }
+    body[data-level="superhard"] { --bg-1: #fef2f2; --bg-2: #ede9fe; --level-accent: #7c3aed; --level-accent-dark: #5b21b6; }
+    body[data-level="champion"] { --bg-1: #fdf2f8; --bg-2: #fff7ed; --level-accent: #db2777; --level-accent-dark: #9d174d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 15% 12%, rgba(245, 158, 11, 0.22), transparent 32%),
+        radial-gradient(circle at 85% 6%, rgba(79, 143, 31, 0.24), transparent 30%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .wrapper {
+      width: min(1400px, calc(100% - 32px));
+      margin: 24px auto;
+      padding: 24px;
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--level-accent-dark);
+      font-size: clamp(26px, 4vw, 42px);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--level-accent) 16%, white);
+      border: 1px solid color-mix(in srgb, var(--level-accent) 35%, white);
+      color: var(--level-accent-dark);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .settings {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 16px 0 20px;
+    }
+
+    .settings label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 12px;
+      border: 1px solid #d8e6c8;
+      border-radius: 14px;
+      background: #fbfff6;
+      color: #35531b;
+      font-size: 15px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .settings input {
+      accent-color: var(--level-accent);
+    }
+
+    .level-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid color-mix(in srgb, var(--level-accent) 30%, white);
+      border-radius: 16px;
+      background: white;
+      color: var(--level-accent-dark);
+      font-weight: 800;
+      box-shadow: 0 6px 16px rgba(55, 65, 81, 0.07);
+    }
+
+    .level-control select {
+      min-width: 150px;
+      padding: 8px 32px 8px 10px;
+      border: 2px solid color-mix(in srgb, var(--level-accent) 35%, white);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 800;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .level-control select:focus {
+      border-color: var(--level-accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--level-accent) 18%, transparent);
+    }
+
+    #levelDescription {
+      width: 100%;
+      margin-top: -6px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .task-card {
+      padding: 24px 18px;
+      border-radius: 26px;
+      background: linear-gradient(180deg, #ffffff, #fbfff4);
+      border: 1px solid rgba(79, 143, 31, 0.16);
+      box-shadow: 0 10px 22px rgba(79, 143, 31, 0.10);
+    }
+
+    .task-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      font-size: clamp(34px, 7vw, 64px);
+      font-weight: 800;
+      color: var(--level-accent);
+    }
+
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.45em;
+      line-height: 1;
+      vertical-align: middle;
+    }
+
+    .fraction .top {
+      padding: 0 0.14em 0.08em;
+      border-bottom: 0.08em solid currentColor;
+    }
+
+    .fraction .bottom {
+      padding: 0.08em 0.14em 0;
+    }
+
+    .mixed-number {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.16em;
+    }
+
+    #action, #equal {
+      color: var(--orange);
+    }
+
+    .answer-box {
+      width: min(260px, 80vw);
+      height: 72px;
+      padding: 6px 14px;
+      border: 3px solid rgba(91, 68, 194, 0.35);
+      border-radius: 18px;
+      background: white;
+      color: var(--violet);
+      font-size: 34px;
+      font-weight: 800;
+      text-align: center;
+      outline: none;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .answer-box:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.18);
+    }
+
+    .hint {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .stat {
+      padding: 14px 12px;
+      border-radius: 20px;
+      background: white;
+      border: 1px solid #edf1e8;
+      box-shadow: 0 6px 16px rgba(55, 65, 81, 0.08);
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: 900;
+    }
+
+    #correct { color: var(--green-dark); }
+    #wrong { color: var(--red); }
+    #total { color: var(--violet); }
+
+    .history-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 8px 0;
+      color: var(--green-dark);
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .small-button {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #eef8e7;
+      color: var(--green-dark);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .small-button:hover {
+      background: #dff2d2;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 260px;
+      resize: vertical;
+      padding: 14px;
+      border: 1px solid #d6e3cc;
+      border-radius: 18px;
+      background: #fcfff8;
+      color: #1f2937;
+      font-size: 17px;
+      font-family: Consolas, Monaco, monospace;
+      line-height: 1.45;
+      outline: none;
+    }
+
+    .feedback {
+      min-height: 28px;
+      margin-top: 12px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .feedback.good { color: var(--green-dark); }
+    .feedback.bad { color: var(--red); }
+
+    @media (max-width: 720px) {
+      .wrapper {
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .topline {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .answer-box {
+        height: 62px;
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrapper" id="wrapper">
+    <section class="topline">
+      <div>
+        <h1>Тренажёр по математике 2026</h1>
+        <p class="subtitle">Целые числа и правильные дроби. Простые повторы отфильтрованы. Нажми Enter, чтобы проверить ответ.</p>
+      </div>
+      <div class="pill" id="levelBadge">⭐ Норм</div>
+    </section>
+
+    <section class="settings" aria-label="Настройки заданий">
+      <div class="level-control">
+        <span>Сложность</span>
+        <select id="levelSelect" aria-label="Сложность">
+          <option value="freebie">халява</option>
+          <option value="superlight">суперлайт</option>
+          <option value="light">лайт</option>
+          <option value="normal" selected>норм</option>
+          <option value="hard">хард</option>
+          <option value="superhard">суперхард</option>
+          <option value="champion">чемпион</option>
+        </select>
+      </div>
+      <label><input type="checkbox" id="modeAdd" checked> Сложение</label>
+      <label><input type="checkbox" id="modeSub" checked> Вычитание</label>
+      <label><input type="checkbox" id="modeMul" checked> Умножение</label>
+      <label><input type="checkbox" id="modeDiv" checked> Деление</label>
+      <label><input type="checkbox" id="modeFrac" checked> Дроби</label>
+      <div id="levelDescription"></div>
+    </section>
+
+    <section class="task-card">
+      <div class="task-row">
+        <span id="arg01">00</span>
+        <span id="action">+</span>
+        <span id="arg02">00</span>
+        <span id="equal">=</span>
+        <input type="search" class="answer-box" id="kinput" autocomplete="off" inputmode="text" aria-label="Ответ">
+      </div>
+      <p class="hint">Для дробей можно писать: <b>1/2</b>, <b>2/3</b>, <b>1 1/4</b>. Ответ автоматически сокращается.</p>
+      <div id="feedback" class="feedback"></div>
+    </section>
+
+    <section class="stats">
+      <div class="stat">
+        <span class="stat-label">Верно</span>
+        <span class="stat-value" id="correct">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Неверно</span>
+        <span class="stat-value" id="wrong">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Всего</span>
+        <span class="stat-value" id="total">0</span>
+      </div>
+    </section>
+
+    <section>
+      <div class="history-title">
+        <span>История ответов</span>
+        <button type="button" class="small-button" id="clearHistory">Очистить</button>
+      </div>
+      <textarea id="area" readonly></textarea>
+    </section>
+  </main>
+
+  <script>
+    window.onload = function() {
+      let currentTask;
+      let n_correct = 0;
+      let n_wrong = 0;
+      const recentTasks = [];
+      const RECENT_TASKS_LIMIT = 8;
+
+      // All difficulty ranges are grouped here.
+      // Change these numbers to tune the trainer without searching through the code.
+      const DIFFICULTY_LEVELS = {
+        freebie: {
+          title: 'Халява',
+          badge: '🍭 Халява',
+          description: 'Очень лёгкий разогрев: маленькие числа и простые дроби.',
+          add: { minA: 2, maxA: 30, minB: 2, maxB: 30, minAnswer: 8 },
+          sub: { minA: 8, maxA: 60, minB: 2, maxB: 35, minAnswer: 3 },
+          mul: { minA: 2, maxA: 9, minB: 2, maxB: 9, minAnswer: 10, allowTen: true },
+          div: { minDivisor: 2, maxDivisor: 9, minResult: 2, maxResult: 9, minDividend: 8, allowTen: true },
+          frac: { minD: 2, maxD: 8, minN: 1, avoidHalves: false, sameDenominatorAllowed: true }
+        },
+        superlight: {
+          title: 'Суперлайт',
+          badge: '🌱 Суперлайт',
+          description: 'Легко, но уже не совсем детсад.',
+          add: { minA: 10, maxA: 80, minB: 10, maxB: 80, minAnswer: 30 },
+          sub: { minA: 25, maxA: 120, minB: 8, maxB: 90, minAnswer: 8 },
+          mul: { minA: 3, maxA: 11, minB: 3, maxB: 11, minAnswer: 18, allowTen: true },
+          div: { minDivisor: 2, maxDivisor: 11, minResult: 3, maxResult: 12, minDividend: 18, allowTen: true },
+          frac: { minD: 3, maxD: 10, minN: 1, avoidHalves: false, sameDenominatorAllowed: true }
+        },
+        light: {
+          title: 'Лайт',
+          badge: '🙂 Лайт',
+          description: 'Комфортная сложность для спокойной тренировки.',
+          add: { minA: 20, maxA: 180, minB: 15, maxB: 180, minAnswer: 60 },
+          sub: { minA: 45, maxA: 260, minB: 15, maxB: 220, minAnswer: 15 },
+          mul: { minA: 3, maxA: 13, minB: 3, maxB: 13, minAnswer: 30, allowTen: true },
+          div: { minDivisor: 3, maxDivisor: 12, minResult: 3, maxResult: 14, minDividend: 30, allowTen: true },
+          frac: { minD: 4, maxD: 12, minN: 1, avoidHalves: false, sameDenominatorAllowed: false }
+        },
+        normal: {
+          title: 'Норм',
+          badge: '⭐ Норм',
+          description: 'Текущий сбалансированный режим: уже надо думать.',
+          add: { minA: 35, maxA: 499, minB: 27, maxB: 499, minAnswer: 100 },
+          sub: { minA: 80, maxA: 750, minB: 20, maxB: 690, minAnswer: 25 },
+          mul: { minA: 4, maxA: 19, minB: 4, maxB: 19, minAnswer: 50, allowTen: false },
+          div: { minDivisor: 3, maxDivisor: 14, minResult: 4, maxResult: 19, minDividend: 45, allowTen: false },
+          frac: { minD: 5, maxD: 16, minN: 2, avoidHalves: true, sameDenominatorAllowed: false }
+        },
+        hard: {
+          title: 'Хард',
+          badge: '🔥 Хард',
+          description: 'Крупнее числа, таблица умножения уже с продолжением.',
+          add: { minA: 80, maxA: 999, minB: 60, maxB: 999, minAnswer: 250 },
+          sub: { minA: 180, maxA: 1400, minB: 70, maxB: 1200, minAnswer: 60 },
+          mul: { minA: 6, maxA: 24, minB: 6, maxB: 24, minAnswer: 90, allowTen: false },
+          div: { minDivisor: 4, maxDivisor: 18, minResult: 6, maxResult: 24, minDividend: 90, allowTen: false },
+          frac: { minD: 7, maxD: 20, minN: 2, avoidHalves: true, sameDenominatorAllowed: false }
+        },
+        superhard: {
+          title: 'Суперхард',
+          badge: '⚡ Суперхард',
+          description: 'Серьёзная зарядка для мозга: большие числа и вредные дроби.',
+          add: { minA: 150, maxA: 1999, minB: 120, maxB: 1999, minAnswer: 500 },
+          sub: { minA: 400, maxA: 3000, minB: 150, maxB: 2600, minAnswer: 120 },
+          mul: { minA: 8, maxA: 29, minB: 8, maxB: 29, minAnswer: 150, allowTen: false },
+          div: { minDivisor: 6, maxDivisor: 24, minResult: 8, maxResult: 30, minDividend: 150, allowTen: false },
+          frac: { minD: 9, maxD: 24, minN: 2, avoidHalves: true, sameDenominatorAllowed: false }
+        },
+        champion: {
+          title: 'Чемпион',
+          badge: '🏆 Чемпион',
+          description: 'Режим для героя: легко не будет, зато красиво.',
+          add: { minA: 300, maxA: 4999, minB: 250, maxB: 4999, minAnswer: 1000 },
+          sub: { minA: 900, maxA: 7000, minB: 300, maxB: 6500, minAnswer: 250 },
+          mul: { minA: 11, maxA: 39, minB: 11, maxB: 39, minAnswer: 250, allowTen: false },
+          div: { minDivisor: 8, maxDivisor: 32, minResult: 11, maxResult: 39, minDividend: 250, allowTen: false },
+          frac: { minD: 11, maxD: 30, minN: 3, avoidHalves: true, sameDenominatorAllowed: false }
+        }
+      };
+
+      const elAction = document.getElementById('action');
+      const elArg01 = document.getElementById('arg01');
+      const elArg02 = document.getElementById('arg02');
+      const area = document.getElementById('area');
+      const kinput = document.getElementById('kinput');
+      const feedback = document.getElementById('feedback');
+      const clearHistory = document.getElementById('clearHistory');
+      const levelSelect = document.getElementById('levelSelect');
+      const levelBadge = document.getElementById('levelBadge');
+      const levelDescription = document.getElementById('levelDescription');
+
+      const modeAdd = document.getElementById('modeAdd');
+      const modeSub = document.getElementById('modeSub');
+      const modeMul = document.getElementById('modeMul');
+      const modeDiv = document.getElementById('modeDiv');
+      const modeFrac = document.getElementById('modeFrac');
+      const modeCheckboxes = [modeAdd, modeSub, modeMul, modeDiv, modeFrac];
+
+      applyDifficultyLevel();
+      kinput.focus();
+      newTask();
+
+      kinput.onkeyup = handle;
+      clearHistory.onclick = function() {
+        area.value = '';
+        kinput.focus();
+      };
+
+      levelSelect.addEventListener('change', function() {
+        applyDifficultyLevel();
+        newTask();
+      });
+
+      modeCheckboxes.forEach(function(box) {
+        box.addEventListener('change', function() {
+          if (!modeCheckboxes.some(function(x) { return x.checked; })) {
+            box.checked = true;
+          }
+          newTask();
+        });
+      });
+
+      function handle(e) {
+        switch (e.code) {
+          case 'Delete':
+          case 'Escape':
+            kinput.value = '';
+            clearFeedback();
+            break;
+          case 'Enter':
+          case 'NumpadEnter':
+            if (kinput.value.trim() !== '') {
+              checkResult();
+            }
+            break;
+        }
+      }
+
+      function checkResult() {
+        const userValue = parseAnswer(kinput.value);
+        const number = n_wrong + n_correct + 1;
+        let tempStr = number + ') ';
+
+        if (!userValue) {
+          ++n_wrong;
+          showFeedback('Ответ не понял. Попробуй так: 3/4 или 1 1/2', false);
+          tempStr += currentTask.text + ' ≠ ' + kinput.value + ' ОШИБКА';
+          kinput.value = '';
+          updateStats();
+          prependHistory(tempStr);
+          return;
+        }
+
+        if (sameFraction(userValue, currentTask.answer)) {
+          ++n_correct;
+          showFeedback('Отлично! Правильно 🎉', true);
+          tempStr += currentTask.text + ' = ' + formatAnswer(currentTask.answer);
+          newTask();
+        } else {
+          ++n_wrong;
+          showFeedback('Почти! Правильный ответ: ' + formatAnswer(currentTask.answer), false);
+          tempStr += currentTask.text + ' ≠ ' + kinput.value + ' ОШИБКА, правильно: ' + formatAnswer(currentTask.answer);
+          kinput.value = '';
+        }
+
+        updateStats();
+        prependHistory(tempStr);
+      }
+
+      function newTask() {
+        updateStats();
+        clearFeedback();
+
+        currentTask = createTask();
+        elAction.innerHTML = currentTask.sign;
+        elArg01.innerHTML = currentTask.leftHtml;
+        elArg02.innerHTML = currentTask.rightHtml;
+        kinput.value = '';
+        kinput.focus();
+      }
+
+      function createTask() {
+        const modes = [];
+        if (modeAdd.checked) modes.push('add');
+        if (modeSub.checked) modes.push('sub');
+        if (modeMul.checked) modes.push('mul');
+        if (modeDiv.checked) modes.push('div');
+        if (modeFrac.checked) modes.push('fracAdd', 'fracSub', 'fracMul');
+
+        // Try several times to avoid very simple or recently repeated tasks.
+        for (let attempt = 0; attempt < 80; attempt++) {
+          const mode = modes[getRandomIntInclusive(0, modes.length - 1)];
+          const task = createTaskByMode(mode);
+
+          if (!isRecentlyUsed(task.text) && !isTooEasy(task)) {
+            rememberTask(task.text);
+            return task;
+          }
+        }
+
+        const fallback = createTaskByMode(modes[getRandomIntInclusive(0, modes.length - 1)]);
+        rememberTask(fallback.text);
+        return fallback;
+      }
+
+      function createTaskByMode(mode) {
+        switch (mode) {
+          case 'add':
+            return harderAdditionTask();
+          case 'sub':
+            return harderSubtractionTask();
+          case 'mul':
+            return harderMultiplicationTask();
+          case 'div':
+            return harderDivisionTask();
+          case 'fracSub':
+            return fractionTask('-');
+          case 'fracMul':
+            return fractionTask('×');
+          case 'fracAdd':
+          default:
+            return fractionTask('+');
+        }
+      }
+
+      function getLevelConfig() {
+        return DIFFICULTY_LEVELS[levelSelect.value] || DIFFICULTY_LEVELS.normal;
+      }
+
+      function applyDifficultyLevel() {
+        const cfg = getLevelConfig();
+        document.body.dataset.level = levelSelect.value;
+        levelBadge.textContent = cfg.badge;
+        levelDescription.textContent = cfg.description;
+      }
+
+      function harderAdditionTask() {
+        const cfg = getLevelConfig().add;
+        let a, b;
+        do {
+          a = getRandomIntInclusive(cfg.minA, cfg.maxA);
+          b = getRandomIntInclusive(cfg.minB, cfg.maxB);
+        } while (
+          a + b < cfg.minAnswer ||
+          a === b ||
+          (a % 10 === 0 && b % 10 === 0) ||
+          (cfg.minAnswer >= 100 && a < 50 && b < 50)
+        );
+
+        return integerTask('+', a, b);
+      }
+
+      function harderSubtractionTask() {
+        const cfg = getLevelConfig().sub;
+        let a, b;
+        do {
+          a = getRandomIntInclusive(cfg.minA, cfg.maxA);
+          b = getRandomIntInclusive(cfg.minB, cfg.maxB);
+          if (a < b) [a, b] = [b, a];
+        } while (
+          a - b < cfg.minAnswer ||
+          a === b ||
+          (a % 10 === 0 && b % 10 === 0)
+        );
+
+        return integerTask('-', a, b);
+      }
+
+      function harderMultiplicationTask() {
+        const cfg = getLevelConfig().mul;
+        let a, b;
+        do {
+          a = getRandomIntInclusive(cfg.minA, cfg.maxA);
+          b = getRandomIntInclusive(cfg.minB, cfg.maxB);
+        } while (
+          a * b < cfg.minAnswer ||
+          (!cfg.allowTen && (a === 10 || b === 10)) ||
+          (a <= 6 && b <= 6) ||
+          (a % 5 === 0 && b % 2 === 0) ||
+          (b % 5 === 0 && a % 2 === 0)
+        );
+
+        return integerTask('×', a, b);
+      }
+
+      function harderDivisionTask() {
+        const cfg = getLevelConfig().div;
+        let divisor, result;
+        do {
+          divisor = getRandomIntInclusive(cfg.minDivisor, cfg.maxDivisor);
+          result = getRandomIntInclusive(cfg.minResult, cfg.maxResult);
+        } while (
+          (!cfg.allowTen && (divisor === 10 || result === 10)) ||
+          divisor * result < cfg.minDividend ||
+          (divisor <= 5 && result <= 6)
+        );
+
+        return integerTask('÷', divisor * result, divisor);
+      }
+
+      function integerTask(sign, a, b) {
+        let answer;
+        if (sign === '+') answer = makeFraction(a + b, 1);
+        if (sign === '-') answer = makeFraction(a - b, 1);
+        if (sign === '×') answer = makeFraction(a * b, 1);
+        if (sign === '÷') answer = makeFraction(a / b, 1);
+
+        return {
+          sign,
+          leftHtml: String(a),
+          rightHtml: String(b),
+          text: a + ' ' + sign + ' ' + b,
+          answer
+        };
+      }
+
+      function fractionTask(sign) {
+        let a, b, answer;
+
+        for (let attempt = 0; attempt < 80; attempt++) {
+          a = randomProperFraction();
+          b = randomProperFraction();
+
+          if (sameFraction(a, b)) continue;
+          if (!getLevelConfig().frac.sameDenominatorAllowed && a.d === b.d && sign !== '×') continue;
+
+          if (sign === '+') answer = addFractions(a, b);
+
+          if (sign === '-') {
+            if (compareFractions(a, b) < 0) [a, b] = [b, a];
+            answer = subtractFractions(a, b);
+            if (answer.n === 0 || Math.abs(answer.n / answer.d) < 0.15) continue;
+          }
+
+          if (sign === '×') {
+            answer = multiplyFractions(a, b);
+            if (answer.d <= 12 || answer.n === 1) continue;
+          }
+
+          break;
+        }
+
+        return {
+          sign,
+          leftHtml: formatFractionHtml(a),
+          rightHtml: formatFractionHtml(b),
+          text: formatAnswer(a) + ' ' + sign + ' ' + formatAnswer(b),
+          answer
+        };
+      }
+
+      function randomProperFraction() {
+        const cfg = getLevelConfig().frac;
+        let fraction;
+
+        do {
+          const denominator = getRandomIntInclusive(cfg.minD, cfg.maxD);
+          const maxNumerator = Math.max(cfg.minN, denominator - 2);
+          const numerator = getRandomIntInclusive(cfg.minN, maxNumerator);
+          fraction = makeFraction(numerator, denominator);
+        } while (
+          fraction.d < cfg.minD ||
+          fraction.n >= fraction.d ||
+          (cfg.avoidHalves && sameFraction(fraction, makeFraction(1, 2))) ||
+          (cfg.avoidHalves && sameFraction(fraction, makeFraction(1, 3))) ||
+          (cfg.avoidHalves && sameFraction(fraction, makeFraction(2, 3)))
+        );
+
+        return fraction;
+      }
+
+      function makeFraction(n, d) {
+        if (d === 0) throw new Error('Denominator cannot be zero');
+        if (d < 0) {
+          n = -n;
+          d = -d;
+        }
+
+        const divisor = gcd(Math.abs(n), Math.abs(d));
+        return { n: n / divisor, d: d / divisor };
+      }
+
+      function addFractions(a, b) {
+        return makeFraction(a.n * b.d + b.n * a.d, a.d * b.d);
+      }
+
+      function subtractFractions(a, b) {
+        return makeFraction(a.n * b.d - b.n * a.d, a.d * b.d);
+      }
+
+      function multiplyFractions(a, b) {
+        return makeFraction(a.n * b.n, a.d * b.d);
+      }
+
+      function compareFractions(a, b) {
+        return a.n * b.d - b.n * a.d;
+      }
+
+      function sameFraction(a, b) {
+        return a.n === b.n && a.d === b.d;
+      }
+
+      function isRecentlyUsed(taskText) {
+        return recentTasks.includes(taskText);
+      }
+
+      function rememberTask(taskText) {
+        recentTasks.unshift(taskText);
+        if (recentTasks.length > RECENT_TASKS_LIMIT) {
+          recentTasks.pop();
+        }
+      }
+
+      function isTooEasy(task) {
+        const answerValue = task.answer.n / task.answer.d;
+
+        if (task.sign === '+') {
+          return task.answer.d === 1 && answerValue < 100;
+        }
+
+        if (task.sign === '-') {
+          return task.answer.d === 1 && answerValue < 25;
+        }
+
+        if (task.sign === '×') {
+          return task.answer.d === 1 && (answerValue < 50 || task.text.includes('× 10') || task.text.includes('10 ×'));
+        }
+
+        if (task.sign === '÷') {
+          return task.answer.d === 1 && answerValue < 4;
+        }
+
+        return false;
+      }
+
+      function parseAnswer(value) {
+        const s = value.trim().replace(',', '.');
+
+        // Mixed number: 1 2/3
+        const mixed = s.match(/^(-?\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+        if (mixed) {
+          const whole = Number(mixed[1]);
+          const numerator = Number(mixed[2]);
+          const denominator = Number(mixed[3]);
+          if (!isValidDenominator(denominator)) return null;
+          const sign = whole < 0 ? -1 : 1;
+          return makeFraction(whole * denominator + sign * numerator, denominator);
+        }
+
+        // Simple fraction: 2/3
+        const fraction = s.match(/^(-?\d+)\s*\/\s*(-?\d+)$/);
+        if (fraction) {
+          const numerator = Number(fraction[1]);
+          const denominator = Number(fraction[2]);
+          if (!isValidDenominator(denominator)) return null;
+          return makeFraction(numerator, denominator);
+        }
+
+        // Integer or decimal.
+        if (/^-?\d+(\.\d+)?$/.test(s)) {
+          const number = Number(s);
+          if (!Number.isFinite(number)) return null;
+          const parts = s.split('.');
+          if (parts.length === 1) return makeFraction(number, 1);
+          const digits = parts[1].length;
+          return makeFraction(Math.round(number * Math.pow(10, digits)), Math.pow(10, digits));
+        }
+
+        return null;
+      }
+
+      function isValidDenominator(value) {
+        return Number.isInteger(value) && value !== 0;
+      }
+
+      function formatAnswer(fraction) {
+        const f = makeFraction(fraction.n, fraction.d);
+        if (f.d === 1) return String(f.n);
+
+        const absN = Math.abs(f.n);
+        if (absN > f.d) {
+          const whole = Math.trunc(f.n / f.d);
+          const rest = Math.abs(f.n % f.d);
+          return whole + ' ' + rest + '/' + f.d;
+        }
+
+        return f.n + '/' + f.d;
+      }
+
+      function formatFractionHtml(fraction) {
+        const f = makeFraction(fraction.n, fraction.d);
+        if (f.d === 1) return String(f.n);
+
+        if (Math.abs(f.n) > f.d) {
+          const whole = Math.trunc(f.n / f.d);
+          const rest = Math.abs(f.n % f.d);
+          return '<span class="mixed-number"><span>' + whole + '</span>' + formatFractionHtml(makeFraction(rest, f.d)) + '</span>';
+        }
+
+        return '<span class="fraction"><span class="top">' + f.n + '</span><span class="bottom">' + f.d + '</span></span>';
+      }
+
+      function gcd(a, b) {
+        while (b !== 0) {
+          const t = b;
+          b = a % b;
+          a = t;
+        }
+        return a || 1;
+      }
+
+      function updateStats() {
+        document.getElementById('correct').innerHTML = n_correct;
+        document.getElementById('wrong').innerHTML = n_wrong;
+        document.getElementById('total').innerHTML = n_wrong + n_correct;
+      }
+
+      function prependHistory(line) {
+        area.value = line + '\n' + area.value;
+      }
+
+      function showFeedback(text, isGood) {
+        feedback.textContent = text;
+        feedback.className = 'feedback ' + (isGood ? 'good' : 'bad');
+      }
+
+      function clearFeedback() {
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+      }
+
+      function getRandomIntInclusive(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+    };
+  </script>
+</body>
+</html>
