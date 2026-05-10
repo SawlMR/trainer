@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Тренажёр по математике</title>
   <style>
     :root {
@@ -29,12 +29,11 @@
     body[data-level="normal"] { --bg-1: #fff7d6; --bg-2: #e9f8d8; --level-accent: #4f8f1f; --level-accent-dark: #2f6b12; }
     body[data-level="hard"] { --bg-1: #fff1d6; --bg-2: #e0f2fe; --level-accent: #ea580c; --level-accent-dark: #c2410c; }
     body[data-level="superhard"] { --bg-1: #fef2f2; --bg-2: #ede9fe; --level-accent: #7c3aed; --level-accent-dark: #5b21b6; }
-    body[data-level="champion"] { --bg-1: #fdf2f8; --bg-2: #fff7ed; --level-accent: #db2777; --level-accent-dark: #9d174d;
-    }
+    body[data-level="champion"] { --bg-1: #fdf2f8; --bg-2: #fff7ed; --level-accent: #db2777; --level-accent-dark: #9d174d; }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
+
+    html { min-height: 100%; }
 
     body {
       min-height: 100vh;
@@ -49,8 +48,8 @@
 
     .wrapper {
       width: min(1400px, calc(100% - 32px));
-      margin: 24px auto;
-      padding: 24px;
+      margin: 20px auto;
+      padding: 20px;
       background: var(--card);
       border: 1px solid rgba(255, 255, 255, 0.7);
       border-radius: 28px;
@@ -64,21 +63,21 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
       text-align: left;
     }
 
     h1 {
       margin: 0;
       color: var(--level-accent-dark);
-      font-size: clamp(26px, 4vw, 42px);
+      font-size: clamp(24px, 4vw, 42px);
       line-height: 1.05;
     }
 
     .subtitle {
       margin: 6px 0 0;
       color: var(--muted);
-      font-size: 15px;
+      font-size: 14px;
     }
 
     .pill {
@@ -90,52 +89,36 @@
       background: color-mix(in srgb, var(--level-accent) 16%, white);
       border: 1px solid color-mix(in srgb, var(--level-accent) 35%, white);
       color: var(--level-accent-dark);
-      font-weight: 700;
+      font-weight: 800;
       white-space: nowrap;
     }
 
-    .settings {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin: 16px 0 20px;
-    }
-
-    .settings label {
-      display: inline-flex;
+    .level-row {
+      display: grid;
+      grid-template-columns: auto minmax(190px, 1fr);
       align-items: center;
-      gap: 7px;
-      padding: 10px 12px;
-      border: 1px solid #d8e6c8;
-      border-radius: 14px;
-      background: #fbfff6;
-      color: #35531b;
-      font-size: 15px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .settings input {
-      accent-color: var(--level-accent);
+      gap: 12px;
+      margin: 10px 0 14px;
+      padding: 12px;
+      border: 1px solid color-mix(in srgb, var(--level-accent) 24%, white);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.74);
+      box-shadow: 0 6px 16px rgba(55, 65, 81, 0.06);
+      text-align: left;
     }
 
     .level-control {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 12px;
-      border: 1px solid color-mix(in srgb, var(--level-accent) 30%, white);
-      border-radius: 16px;
-      background: white;
       color: var(--level-accent-dark);
-      font-weight: 800;
-      box-shadow: 0 6px 16px rgba(55, 65, 81, 0.07);
+      font-weight: 900;
+      white-space: nowrap;
     }
 
     .level-control select {
-      min-width: 150px;
-      padding: 8px 32px 8px 10px;
+      min-width: 155px;
+      padding: 9px 32px 9px 11px;
       border: 2px solid color-mix(in srgb, var(--level-accent) 35%, white);
       border-radius: 12px;
       background: #fff;
@@ -152,19 +135,40 @@
     }
 
     #levelDescription {
-      width: 100%;
-      margin-top: -6px;
       color: var(--muted);
       font-size: 13px;
-      text-align: center;
+      line-height: 1.25;
+    }
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: minmax(360px, 0.92fr) minmax(420px, 1.08fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .task-card, .history-card, .stats-card, .modes-card {
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(79, 143, 31, 0.15);
+      box-shadow: 0 10px 22px rgba(79, 143, 31, 0.09);
+    }
+
+    .left-stack, .right-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
     }
 
     .task-card {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 245px;
       padding: 24px 18px;
-      border-radius: 26px;
       background: linear-gradient(180deg, #ffffff, #fbfff4);
-      border: 1px solid rgba(79, 143, 31, 0.16);
-      box-shadow: 0 10px 22px rgba(79, 143, 31, 0.10);
     }
 
     .task-row {
@@ -172,9 +176,9 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      font-size: clamp(34px, 7vw, 64px);
-      font-weight: 800;
+      gap: 12px;
+      font-size: clamp(34px, 6vw, 62px);
+      font-weight: 900;
       color: var(--level-accent);
     }
 
@@ -193,9 +197,7 @@
       border-bottom: 0.08em solid currentColor;
     }
 
-    .fraction .bottom {
-      padding: 0.08em 0.14em 0;
-    }
+    .fraction .bottom { padding: 0.08em 0.14em 0; }
 
     .mixed-number {
       display: inline-flex;
@@ -203,20 +205,18 @@
       gap: 0.16em;
     }
 
-    #action, #equal {
-      color: var(--orange);
-    }
+    #action, #equal { color: var(--orange); }
 
     .answer-box {
-      width: min(260px, 80vw);
-      height: 72px;
+      width: min(240px, 82vw);
+      height: 68px;
       padding: 6px 14px;
       border: 3px solid rgba(91, 68, 194, 0.35);
       border-radius: 18px;
       background: white;
       color: var(--violet);
       font-size: 34px;
-      font-weight: 800;
+      font-weight: 900;
       text-align: center;
       outline: none;
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
@@ -230,36 +230,48 @@
     .hint {
       margin: 12px 0 0;
       color: var(--muted);
-      font-size: 14px;
+      font-size: 13px;
+      line-height: 1.35;
     }
+
+    .feedback {
+      min-height: 26px;
+      margin-top: 10px;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .feedback.good { color: var(--green-dark); }
+    .feedback.bad { color: var(--red); }
+
+    .stats-card { padding: 14px; }
 
     .stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin: 18px 0;
+      gap: 10px;
     }
 
     .stat {
-      padding: 14px 12px;
-      border-radius: 20px;
-      background: white;
+      padding: 12px 10px;
+      border-radius: 18px;
+      background: #fff;
       border: 1px solid #edf1e8;
-      box-shadow: 0 6px 16px rgba(55, 65, 81, 0.08);
+      box-shadow: 0 6px 14px rgba(55, 65, 81, 0.06);
     }
 
     .stat-label {
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       color: var(--muted);
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
 
     .stat-value {
-      font-size: 36px;
+      font-size: 32px;
       font-weight: 900;
     }
 
@@ -267,13 +279,15 @@
     #wrong { color: var(--red); }
     #total { color: var(--violet); }
 
-    .history-title {
+    .history-card, .modes-card { padding: 14px; }
+
+    .history-title, .modes-title {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 8px 0;
+      margin: 0 0 9px;
       color: var(--green-dark);
-      font-weight: 800;
+      font-weight: 900;
       text-align: left;
     }
 
@@ -283,57 +297,271 @@
       padding: 8px 12px;
       background: #eef8e7;
       color: var(--green-dark);
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
     }
 
-    .small-button:hover {
-      background: #dff2d2;
-    }
+    .small-button:hover { background: #dff2d2; }
 
     textarea {
       width: 100%;
-      min-height: 260px;
+      height: clamp(190px, 33vh, 380px);
+      min-height: 150px;
       resize: vertical;
-      padding: 14px;
+      padding: 13px;
       border: 1px solid #d6e3cc;
       border-radius: 18px;
       background: #fcfff8;
       color: #1f2937;
-      font-size: 17px;
+      font-size: 16px;
       font-family: Consolas, Monaco, monospace;
-      line-height: 1.45;
+      line-height: 1.4;
       outline: none;
     }
 
-    .feedback {
-      min-height: 28px;
-      margin-top: 12px;
-      font-size: 18px;
-      font-weight: 800;
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(105px, 1fr));
+      gap: 9px;
     }
 
-    .feedback.good { color: var(--green-dark); }
-    .feedback.bad { color: var(--red); }
+    .mode-grid label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid rgba(249, 115, 22, 0.24);
+      border-radius: 15px;
+      background: #fffdf7;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .mode-grid label:hover {
+      background: #fff7ed;
+      border-color: rgba(249, 115, 22, 0.48);
+    }
+
+    .mode-grid input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--level-accent);
+    }
+
+    @media (max-width: 980px) {
+      .work-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .task-card {
+        min-height: auto;
+      }
+
+      .mode-grid {
+        grid-template-columns: repeat(3, minmax(105px, 1fr));
+      }
+    }
 
     @media (max-width: 720px) {
+      body {
+        background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      }
+
       .wrapper {
-        padding: 18px;
-        border-radius: 22px;
+        width: calc(100% - 14px);
+        margin: 7px auto;
+        padding: 10px;
+        border-radius: 18px;
       }
 
       .topline {
         align-items: flex-start;
-        flex-direction: column;
+        flex-direction: row;
+        gap: 8px;
+        margin-bottom: 8px;
       }
 
-      .stats {
+      h1 {
+        font-size: 21px;
+        line-height: 1.05;
+      }
+
+      .subtitle {
+        display: none;
+      }
+
+      .pill {
+        padding: 7px 9px;
+        font-size: 13px;
+      }
+
+      .level-row {
         grid-template-columns: 1fr;
+        gap: 6px;
+        margin: 8px 0;
+        padding: 8px;
+        border-radius: 16px;
+      }
+
+      .level-control {
+        justify-content: space-between;
+        width: 100%;
+        font-size: 14px;
+      }
+
+      .level-control select {
+        min-width: 140px;
+        padding: 7px 28px 7px 9px;
+        font-size: 14px;
+      }
+
+      #levelDescription {
+        display: none;
+      }
+
+      .work-grid, .left-stack, .right-stack {
+        gap: 8px;
+      }
+
+      .task-card, .history-card, .stats-card, .modes-card {
+        border-radius: 16px;
+      }
+
+      .task-card {
+        padding: 12px 8px 10px;
+      }
+
+      .task-row {
+        gap: 7px;
+        font-size: clamp(27px, 9.5vw, 43px);
       }
 
       .answer-box {
-        height: 62px;
-        font-size: 30px;
+        width: min(145px, 45vw);
+        height: 50px;
+        border-width: 2px;
+        border-radius: 14px;
+        font-size: 26px;
+      }
+
+      .hint {
+        margin-top: 7px;
+        font-size: 12px;
+      }
+
+      .feedback {
+        min-height: 20px;
+        margin-top: 6px;
+        font-size: 14px;
+      }
+
+      .history-card, .modes-card, .stats-card {
+        padding: 9px;
+      }
+
+      .history-title, .modes-title {
+        margin-bottom: 6px;
+        font-size: 14px;
+      }
+
+      .small-button {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      textarea {
+        height: 118px;
+        min-height: 96px;
+        padding: 9px;
+        border-radius: 14px;
+        font-size: 13px;
+        line-height: 1.3;
+      }
+
+      .stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+
+      .stat {
+        padding: 7px 5px;
+        border-radius: 14px;
+      }
+
+      .stat-label {
+        font-size: 10px;
+        letter-spacing: 0.02em;
+      }
+
+      .stat-value {
+        font-size: 23px;
+      }
+
+      .mode-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .mode-grid label {
+        min-height: 35px;
+        padding: 6px 7px;
+        border-radius: 12px;
+        font-size: 12px;
+      }
+
+      .mode-grid input {
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .topline {
+        flex-direction: column;
+      }
+
+      .pill {
+        align-self: flex-start;
+      }
+
+      .task-row {
+        font-size: clamp(24px, 8.8vw, 36px);
+      }
+
+      .answer-box {
+        width: 128px;
+        height: 46px;
+        font-size: 23px;
+      }
+    }
+
+    @media (max-height: 680px) and (max-width: 720px) {
+      .wrapper {
+        margin-top: 4px;
+        margin-bottom: 4px;
+      }
+
+      .hint {
+        display: none;
+      }
+
+      textarea {
+        height: 86px;
+        min-height: 72px;
+      }
+
+      .task-card {
+        padding-top: 9px;
+        padding-bottom: 8px;
+      }
+
+      .mode-grid label {
+        min-height: 31px;
       }
     }
   </style>
@@ -343,12 +571,12 @@
     <section class="topline">
       <div>
         <h1>Тренажёр по математике 2026</h1>
-        <p class="subtitle">Целые числа и правильные дроби. Простые повторы отфильтрованы. Нажми Enter, чтобы проверить ответ.</p>
+        <p class="subtitle">Целые числа и правильные дроби. Нажми Enter, чтобы проверить ответ.</p>
       </div>
       <div class="pill" id="levelBadge">⭐ Норм</div>
     </section>
 
-    <section class="settings" aria-label="Настройки заданий">
+    <section class="level-row" aria-label="Уровень сложности">
       <div class="level-control">
         <span>Сложность</span>
         <select id="levelSelect" aria-label="Сложность">
@@ -361,47 +589,61 @@
           <option value="champion">чемпион</option>
         </select>
       </div>
-      <label><input type="checkbox" id="modeAdd" checked> Сложение</label>
-      <label><input type="checkbox" id="modeSub" checked> Вычитание</label>
-      <label><input type="checkbox" id="modeMul" checked> Умножение</label>
-      <label><input type="checkbox" id="modeDiv" checked> Деление</label>
-      <label><input type="checkbox" id="modeFrac" checked> Дроби</label>
       <div id="levelDescription"></div>
     </section>
 
-    <section class="task-card">
-      <div class="task-row">
-        <span id="arg01">00</span>
-        <span id="action">+</span>
-        <span id="arg02">00</span>
-        <span id="equal">=</span>
-        <input type="search" class="answer-box" id="kinput" autocomplete="off" inputmode="text" aria-label="Ответ">
+    <section class="work-grid">
+      <div class="left-stack">
+        <section class="task-card" aria-label="Задание">
+          <div class="task-row">
+            <span id="arg01">00</span>
+            <span id="action">+</span>
+            <span id="arg02">00</span>
+            <span id="equal">=</span>
+            <input type="search" class="answer-box" id="kinput" autocomplete="off" inputmode="text" aria-label="Ответ">
+          </div>
+          <p class="hint">Для дробей можно писать: <b>1/2</b>, <b>2/3</b>, <b>1 1/4</b>. Ответ автоматически сокращается.</p>
+          <div id="feedback" class="feedback"></div>
+        </section>
       </div>
-      <p class="hint">Для дробей можно писать: <b>1/2</b>, <b>2/3</b>, <b>1 1/4</b>. Ответ автоматически сокращается.</p>
-      <div id="feedback" class="feedback"></div>
-    </section>
 
-    <section class="stats">
-      <div class="stat">
-        <span class="stat-label">Верно</span>
-        <span class="stat-value" id="correct">0</span>
-      </div>
-      <div class="stat">
-        <span class="stat-label">Неверно</span>
-        <span class="stat-value" id="wrong">0</span>
-      </div>
-      <div class="stat">
-        <span class="stat-label">Всего</span>
-        <span class="stat-value" id="total">0</span>
-      </div>
-    </section>
+      <div class="right-stack">
+        <section class="history-card" aria-label="История ответов">
+          <div class="history-title">
+            <span>История ответов</span>
+            <button type="button" class="small-button" id="clearHistory">Очистить</button>
+          </div>
+          <textarea id="area" readonly></textarea>
+        </section>
 
-    <section>
-      <div class="history-title">
-        <span>История ответов</span>
-        <button type="button" class="small-button" id="clearHistory">Очистить</button>
+        <section class="stats-card" aria-label="Статистика">
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-label">Верно</span>
+              <span class="stat-value" id="correct">0</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Неверно</span>
+              <span class="stat-value" id="wrong">0</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Всего</span>
+              <span class="stat-value" id="total">0</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="modes-card" aria-label="Какие примеры задавать">
+          <div class="modes-title">Какие примеры задавать</div>
+          <div class="mode-grid">
+            <label><input type="checkbox" id="modeAdd" checked> Сложение</label>
+            <label><input type="checkbox" id="modeSub" checked> Вычитание</label>
+            <label><input type="checkbox" id="modeMul" checked> Умножение</label>
+            <label><input type="checkbox" id="modeDiv" checked> Деление</label>
+            <label><input type="checkbox" id="modeFrac" checked> Дроби</label>
+          </div>
+        </section>
       </div>
-      <textarea id="area" readonly></textarea>
     </section>
   </main>
 
@@ -547,14 +789,16 @@
       }
 
       function checkResult() {
-        const userValue = parseAnswer(kinput.value);
+        const rawAnswer = kinput.value.trim();
+        const userValue = parseAnswer(rawAnswer);
         const number = n_wrong + n_correct + 1;
-        let tempStr = number + ') ';
+        const levelTitle = getLevelConfig().title;
+        let tempStr = number + ') [' + levelTitle + '] ';
 
         if (!userValue) {
           ++n_wrong;
-          showFeedback('Ответ не понял. Попробуй так: 3/4 или 1 1/2', false);
-          tempStr += currentTask.text + ' ≠ ' + kinput.value + ' ОШИБКА';
+          showFeedback('Ответ не понял. Формат дроби: 3/4 или 1 1/2', false);
+          tempStr += currentTask.text + ' ≠ ' + rawAnswer + ' ОШИБКА';
           kinput.value = '';
           updateStats();
           prependHistory(tempStr);
@@ -564,12 +808,12 @@
         if (sameFraction(userValue, currentTask.answer)) {
           ++n_correct;
           showFeedback('Отлично! Правильно 🎉', true);
-          tempStr += currentTask.text + ' = ' + formatAnswer(currentTask.answer);
+          tempStr += currentTask.text + ' = ' + rawAnswer;
           newTask();
         } else {
           ++n_wrong;
-          showFeedback('Почти! Правильный ответ: ' + formatAnswer(currentTask.answer), false);
-          tempStr += currentTask.text + ' ≠ ' + kinput.value + ' ОШИБКА, правильно: ' + formatAnswer(currentTask.answer);
+          showFeedback('Почти! Попробуй ещё раз на следующем примере', false);
+          tempStr += currentTask.text + ' ≠ ' + rawAnswer + ' ОШИБКА';
           kinput.value = '';
         }
 
