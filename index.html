@@ -227,6 +227,10 @@
       box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.18);
     }
 
+    .answer-button {
+      display: none;
+    }
+
     .hint {
       margin: 12px 0 0;
       color: var(--muted);
@@ -449,6 +453,31 @@
         font-size: 26px;
       }
 
+      .answer-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 50px;
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        border: 0;
+        border-radius: 14px;
+        background: var(--level-accent);
+        color: white;
+        font-size: 26px;
+        font-weight: 900;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 6px 14px color-mix(in srgb, var(--level-accent) 24%, transparent);
+        touch-action: manipulation;
+      }
+
+      .answer-button:active {
+        transform: translateY(1px) scale(0.97);
+        background: var(--level-accent-dark);
+      }
+
       .hint {
         margin-top: 7px;
         font-size: 12px;
@@ -538,6 +567,13 @@
         height: 46px;
         font-size: 23px;
       }
+
+      .answer-button {
+        flex-basis: 46px;
+        width: 46px;
+        height: 46px;
+        font-size: 24px;
+      }
     }
 
     @media (max-height: 680px) and (max-width: 720px) {
@@ -571,7 +607,7 @@
     <section class="topline">
       <div>
         <h1>Тренажёр по математике 2026</h1>
-        <p class="subtitle">Целые числа и правильные дроби. Нажми Enter, чтобы проверить ответ.</p>
+        <p class="subtitle">Целые числа и правильные дроби. Нажми Enter или кнопку «Ответить», чтобы проверить ответ.</p>
       </div>
       <div class="pill" id="levelBadge">⭐ Норм</div>
     </section>
@@ -601,6 +637,7 @@
             <span id="arg02">00</span>
             <span id="equal">=</span>
             <input type="search" class="answer-box" id="kinput" autocomplete="off" inputmode="text" aria-label="Ответ">
+            <button type="button" class="answer-button" id="answerButton" aria-label="Проверить ответ" title="Проверить ответ">✓</button>
           </div>
           <p class="hint">Для дробей можно писать: <b>1/2</b>, <b>2/3</b>, <b>1 1/4</b>. Ответ автоматически сокращается.</p>
           <div id="feedback" class="feedback"></div>
@@ -735,6 +772,7 @@
       const elArg02 = document.getElementById('arg02');
       const area = document.getElementById('area');
       const kinput = document.getElementById('kinput');
+      const answerButton = document.getElementById('answerButton');
       const feedback = document.getElementById('feedback');
       const clearHistory = document.getElementById('clearHistory');
       const levelSelect = document.getElementById('levelSelect');
@@ -752,7 +790,9 @@
       kinput.focus();
       newTask();
 
-      kinput.onkeyup = handle;
+      kinput.addEventListener('keydown', handle);
+      answerButton.addEventListener('click', submitAnswer);
+
       clearHistory.onclick = function() {
         area.value = '';
         kinput.focus();
@@ -773,18 +813,23 @@
       });
 
       function handle(e) {
-        switch (e.code) {
-          case 'Delete':
-          case 'Escape':
-            kinput.value = '';
-            clearFeedback();
-            break;
-          case 'Enter':
-          case 'NumpadEnter':
-            if (kinput.value.trim() !== '') {
-              checkResult();
-            }
-            break;
+        if (e.key === 'Escape' || e.key === 'Delete') {
+          kinput.value = '';
+          clearFeedback();
+          return;
+        }
+
+        if (e.key === 'Enter' || e.code === 'Enter' || e.code === 'NumpadEnter') {
+          e.preventDefault();
+          submitAnswer();
+        }
+      }
+
+      function submitAnswer() {
+        if (kinput.value.trim() !== '') {
+          checkResult();
+        } else {
+          kinput.focus();
         }
       }
 
@@ -800,6 +845,7 @@
           showFeedback('Ответ не понял. Формат дроби: 3/4 или 1 1/2', false);
           tempStr += currentTask.text + ' ≠ ' + rawAnswer + ' ОШИБКА';
           kinput.value = '';
+          kinput.focus();
           updateStats();
           prependHistory(tempStr);
           return;
@@ -815,6 +861,7 @@
           showFeedback('Почти! Попробуй ещё раз на следующем примере', false);
           tempStr += currentTask.text + ' ≠ ' + rawAnswer + ' ОШИБКА';
           kinput.value = '';
+          kinput.focus();
         }
 
         updateStats();
